@@ -23,6 +23,21 @@ public class GameController {
 	
 	public void run() {
 		// weee a game loop for numberofRounds
+		for(int i = 0; i < numberOfRounds; i++) {
+			float pot = 0;
+			for(Contributor c : this.contributors) {
+				pot += c.getContribution();
+			}
+			pot = pot * potMultiplyer;
+			float individualPayout = pot / contributors.size();
+			for(Contributor c : this.contributors) {
+				c.addToBank(individualPayout);
+			}
+		}
+		
+		for(Contributor c : this.contributors) {
+			System.out.println(c.toString());
+		}
 	}
 	
 	public void addContributor(Contributor contributor) {
