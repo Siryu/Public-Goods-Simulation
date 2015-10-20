@@ -1,0 +1,12 @@
+to achieve Nash Equilibrium...
+	each player must "know" the equilibrium strategy of every other player
+	(all that really needs to be observed is how changing individual strategy affects payout)
+		Process for individual player:
+			0. start positive (change = 1)
+			0. contribute a random percentage
+			0. observe net gain/loss
+			
+			1. change contribution incrementally (increase if positive, decrease if negative)
+			2. observe change in net gain/loss (netGain = return - contribution)
+			3. adjust change (change *= netGain/netGain)
+			4. repeat steps 1 - 3
