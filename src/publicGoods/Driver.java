@@ -14,7 +14,18 @@ public class Driver {
 		GameController gc = new GameController(1, 2, false, false, false);
 		gc.addContributor(new Contributor(bigSpender, pot));
 		gc.addContributor(new Contributor(miser, pot));
-		gc.addContributor(new Contributor(bigSpender, pot));
+		gc.addContributor(new Contributor(miser, pot));
 		gc.run();
+		
+		// a a b
+		// a a a
+		// a a c
+		// a b b
+		// a b c
+		// b b b
+		// c c c
+		// b c c
+		// b b c
+		// a c c
 	}
 }

@@ -40,13 +40,6 @@ public class Contributor {
 	
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("Contribution: ");
-		sb.append(Math.round(this.contribution * 100) + "%");
-		sb.append("\tTotal balance: ");
-		sb.append(bank);
-		sb.append("\tNet Amount Earned: ");
-		sb.append(netGain);
-		return sb.toString();
+		return String.format("Contribution: %.0f%%\tBalance: %.2f\t\tGain: %.2f", contribution * 100, bank, netGain);
 	}
 }
