@@ -70,4 +70,5 @@ public class GameController {
 		contributor.setMinimumBet(this.minimumEntry);
 		this.contributors.add(contributor);
 	}
+	
 }
