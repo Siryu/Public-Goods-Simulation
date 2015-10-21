@@ -43,4 +43,5 @@ public class GameController {
 	public void addContributor(Contributor contributor) {
 		this.contributors.add(contributor);
 	}
+	
 }

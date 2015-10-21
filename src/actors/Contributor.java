@@ -19,10 +19,10 @@ public class Contributor {
 	public float getBank(){
 		return bank;
 	}
-	public float getAdjustRate(){
+	public float getAdjustRate() {
 		return adjustRate;
 	}
-	public void setAdjustRate(float adjustRate){
+	public void setAdjustRate(float adjustRate) {
 		this.adjustRate = adjustRate;
 	}
 	public void addToBank(float reward){
