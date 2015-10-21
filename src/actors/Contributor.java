@@ -7,6 +7,7 @@ public class Contributor {
 	private byte change = 1;
 	private float netGain = 0;
 	private float adjustRate;
+	private float minimumAmount = 0.0f;
 	
 	public Contributor(float contribution, float bank){
 		this.contribution = contribution;
@@ -14,7 +15,15 @@ public class Contributor {
 	}
 	
 	public float getContribution() {
-		return contribution * bank;
+		float baseAmount;
+		if(this.bank > this.minimumAmount) {
+			float base = contribution * bank;
+			baseAmount = base > this.minimumAmount ? base : minimumAmount;
+		}
+		else {
+			baseAmount = 0;
+		}
+		return baseAmount;
 	}
 	public float getBank(){
 		return bank;
@@ -38,8 +47,16 @@ public class Contributor {
 		contribution += change * adjustRate;
 	}
 	
+	public void removeFromBank(float amount) {
+		this.bank = this.bank > amount ? this.bank - amount : 0;
+	}
+	
+	public void setMinimumBet(float amount) {
+		this.minimumAmount = amount;
+	}
+	
 	@Override
 	public String toString() {
-		return String.format("Contribution: %.0f%%\tBalance: %.2f\t\tGain: %.2f", contribution * 100, bank, netGain);
+		return String.format("Contribution: %-10.0fBalance: %-15.2fGain: %-10.2f", contribution * 100, bank, netGain);
 	}
 }
