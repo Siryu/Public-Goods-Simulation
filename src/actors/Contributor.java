@@ -8,17 +8,20 @@ public class Contributor {
 	private float netGain = 0;
 	private float adjustRate;
 	private float minimumAmount = 0.0f;
+	private float initialContribution;
 	
 	public Contributor(float contribution, float bank){
-		this.contribution = contribution;
+		this.initialContribution = contribution;
 		this.bank = bank;
 	}
 	
 	public float getContribution() {
 		float baseAmount;
 		if(this.bank > this.minimumAmount) {
-			float base = contribution * bank;
-			baseAmount = base > this.minimumAmount ? base : minimumAmount;
+			float base = initialContribution * bank;
+			baseAmount = base > this.minimumAmount ? base : minimumAmount;		
+			this.contribution = baseAmount / this.bank;
+			normalizeContribution();
 		}
 		else {
 			baseAmount = 0;
@@ -36,6 +39,7 @@ public class Contributor {
 	}
 	public void addToBank(float reward){
 		adjustContribution(reward);
+		normalizeContribution();
 		bank += reward;
 	}
 	private void adjustContribution(float reward){
@@ -43,8 +47,17 @@ public class Contributor {
 		netGain = reward - getContribution();
 		bank -= getContribution();
 		float gainChange = netGain - previousGain;
-		change = (byte)(gainChange/gainChange);
-		contribution += change * adjustRate;
+		change = (byte)(gainChange/Math.abs(gainChange));
+		this.contribution += change * adjustRate;
+	}
+	
+	private void normalizeContribution() {
+		if(this.contribution > 100) {
+			this.contribution = 100;
+		}
+		else if(this.contribution < 0) {
+			this.contribution = 0;
+		}
 	}
 	
 	public void removeFromBank(float amount) {
