@@ -3,6 +3,7 @@ package actors;
 import java.util.List;
 
 import contributions.Contribution;
+import contributions.OutwardLookingContribution;
 
 public class Contributor {
 	private Contribution contribution;
@@ -11,7 +12,7 @@ public class Contributor {
 	private double totalGain = 0;
 	
 	public Contributor(float contribution, float bank) {
-		this.contribution = new Contribution(contribution, 0f);
+		this.contribution = new OutwardLookingContribution(contribution, 0f);
 		this.contribution.setMinimumBet(this.bank, 0);
 		this.bank = bank;
 	}
@@ -36,7 +37,12 @@ public class Contributor {
 	
 	public void receiveReward(float reward, List<Contribution> otherContributions){
 		double previousBet = this.contribution.getBet(this.bank);
-		this.contribution.adjustBetPercent(reward, bank, otherContributions);
+		try {
+			this.contribution.adjustBetPercent(reward, bank, otherContributions);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		this.netGain = reward - previousBet;
 		this.totalGain += reward - previousBet;
 		this.bank -= previousBet;

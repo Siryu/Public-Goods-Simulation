@@ -59,7 +59,7 @@ public class Driver {
 	private void phase3() {
 		System.out.println("simulation changed to update contribution for best returns...");
 		float learningRate = 0.1f;
-		GameController gc = new GameController(100, 1.1f, false, false, 0, .1f);
+		GameController gc = new GameController(5, 1.2f, false, false, 0, .01f);
 		gc.addContributor(new Contributor((float)Math.random(), 100, learningRate));
 		gc.addContributor(new Contributor((float)Math.random(), 100, learningRate));
 		gc.addContributor(new Contributor((float)Math.random(), 100, learningRate));
