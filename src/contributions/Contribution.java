@@ -3,7 +3,6 @@ package contributions;
 import java.util.List;
 
 public class Contribution {
-	private float initialBetPercent;
 	private float betPercent;
 	private boolean directionIncreaseBet;
 	private float adjustRate;
@@ -13,7 +12,6 @@ public class Contribution {
 	public Contribution(float betPercent, float adjustRate) {
 		directionIncreaseBet = Math.random() > 0.5d;
 		this.adjustRate = adjustRate;
-		this.initialBetPercent = betPercent;
 		this.betPercent = betPercent;
 	}
 	
@@ -30,6 +28,7 @@ public class Contribution {
 		
 		float directionValue = directionIncreaseBet ? 1 : -1;		
 		this.betPercent += (adjustRate * directionValue);
+		normalizeBet();
 		this.adjustForMinimumBet(bank);
 	}
 	
@@ -63,6 +62,10 @@ public class Contribution {
 	
 	public float getBetPercent() {
 		return this.betPercent;
+	}
+	
+	public void setLearningRate(float learningRate) {
+		this.adjustRate = learningRate;
 	}
 	
 	public void setMinimumBet(double bank, double amount) {

@@ -42,7 +42,6 @@ public class GameController {
 			if(percentageReward) {
 				if(pot > 0) {
 					for(Contributor c : this.contributors) {
-						List<Contribution> otherContributions = getOtherContributions(c);
 						float percentOfPot = (float) (c.getContribution().getBet(c.getBank()) / pot);
 						individualPayout = percentOfPot * newPot;
 						float finalPayout = individualPayout;
@@ -50,7 +49,7 @@ public class GameController {
 						if(highestContributors.contains(c)) {
 							finalPayout += highestContributorReward;
 						}
-						c.receiveReward(finalPayout, this.getOtherContributions(c));
+						c.receiveReward(finalPayout - this.flatPunishment, this.getOtherContributions(c));
 					}
 				}
 			}
@@ -76,18 +75,18 @@ public class GameController {
 					if(highestContributors.contains(c)) {
 						finalPayout += this.bestContributorBonus / highestContributors.size();
 					}
-					c.receiveReward(finalPayout, this.getOtherContributions(c));
+					c.receiveReward(finalPayout - this.flatPunishment, this.getOtherContributions(c));
 				}
 			}
 			
 			//scanner.nextLine();
-			for(Contributor c : this.contributors) {
-				System.out.println(c.toString());
-			}
-			System.out.println();
-		}
-		
+			
 	
+		}
+		for(Contributor c : this.contributors) {
+			System.out.println(c.toString());
+		}
+		System.out.println();
 	}
 	
 	public void addContributor(Contributor contributor) {
@@ -102,14 +101,14 @@ public class GameController {
 				contributors.add(c);
 			}
 			else {
-				for(Contributor inList : contributors) {
-					if(c.getContribution().getBet(c.getBank()) > inList.getContribution().getBet(inList.getBank())) {
-						contributors.remove(inList);
+				for(int i = 0; i < contributors.size(); i++) {
+					if(c.getContribution().getBet(c.getBank()) > contributors.get(i).getContribution().getBet(contributors.get(i).getBank())) {
+						contributors.remove(contributors.get(i));
 						if(!contributors.contains(c)) {
 							contributors.add(c);
 						}
 					}
-					else if(c.getContribution().getBet(c.getBank()) == inList.getContribution().getBet(inList.getBank())) {
+					else if(c.getContribution().getBet(c.getBank()) == contributors.get(i).getContribution().getBet(contributors.get(i).getBank())) {
 						if(!contributors.contains(c)) {
 							contributors.add(c);
 						}
