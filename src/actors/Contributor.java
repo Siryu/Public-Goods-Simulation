@@ -4,9 +4,12 @@ import java.util.List;
 
 import contributions.Contribution;
 import contributions.OutwardLookingContribution;
+import contributions.SelfLookingContribution;
 
 public class Contributor {
 	private Contribution contribution;
+	private float initialContribution;
+	private boolean initialPositiveDirection;
 	private float bank;
 	private double netGain = 0;
 	private double totalGain = 0;
@@ -14,6 +17,9 @@ public class Contributor {
 	public Contributor(float contribution, float bank) {
 		this.contribution = new OutwardLookingContribution(contribution, 0f);
 		this.contribution.setMinimumBet(this.bank, 0);
+		this.initialPositiveDirection = this.contribution.getPositiveDirecetion();
+		this.initialContribution = contribution;
+		
 		this.bank = bank;
 	}
 	
@@ -35,10 +41,10 @@ public class Contributor {
 		return bank;
 	}
 	
-	public void receiveReward(float reward, List<Contribution> otherContributions){
+	public void receiveReward(float reward, double totalReward, List<Contribution> otherContributions){
 		double previousBet = this.contribution.getBet(this.bank);
 		try {
-			this.contribution.adjustBetPercent(reward, bank, otherContributions);
+			this.contribution.adjustBetPercent(reward, bank, totalReward, otherContributions);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -55,6 +61,6 @@ public class Contributor {
 		
 	@Override
 	public String toString() {
-		return String.format("Contribution: %-10.0fBalance: %-15.2fGain: %-15.2fTotal Gain: %-10.2f", this.contribution.getBetPercent() * 100, this.bank, this.netGain, this.totalGain);
+		return String.format("InitialContribution: %-10.0f InitialOptomistic: %b \n\tContribution: %-10.0fBalance: %-15.2fGain: %-15.2fTotal Gain: %-10.2f", this.initialContribution * 100, this.initialPositiveDirection, this.contribution.getBetPercent() * 100, this.bank, this.netGain, this.totalGain);
 	}
 }

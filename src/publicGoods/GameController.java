@@ -49,7 +49,7 @@ public class GameController {
 						if(highestContributors.contains(c)) {
 							finalPayout += highestContributorReward;
 						}
-						c.receiveReward(finalPayout - this.flatPunishment, this.getOtherContributions(c));
+						c.receiveReward(finalPayout - this.flatPunishment, newPot, this.getOtherContributions(c));
 					}
 				}
 			}
@@ -75,18 +75,18 @@ public class GameController {
 					if(highestContributors.contains(c)) {
 						finalPayout += this.bestContributorBonus / highestContributors.size();
 					}
-					c.receiveReward(finalPayout - this.flatPunishment, this.getOtherContributions(c));
+					c.receiveReward(finalPayout - this.flatPunishment, newPot, this.getOtherContributions(c));
 				}
 			}
-			
-			//scanner.nextLine();
+			for(Contributor c : this.contributors) {
+				System.out.println(c.toString());
+			}
+			System.out.println();
+			scanner.nextLine();
 			
 	
 		}
-		for(Contributor c : this.contributors) {
-			System.out.println(c.toString());
-		}
-		System.out.println();
+		
 	}
 	
 	public void addContributor(Contributor contributor) {

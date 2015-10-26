@@ -9,7 +9,7 @@ public class SelfLookingContribution extends Contribution {
 	}
 	
 	@Override
-	public void adjustBetPercent(double reward, double bank, List<Contribution> otherContributions) {
+	public void adjustBetPercent(double reward, double bank, double totalReward, List<Contribution> otherContributions) {
 		double originalContribution = this.getBet(bank);
 		float previousGainChangePercent = this.previousChangePercent;
 		float currentGainChangePercent = (float) (reward / originalContribution);

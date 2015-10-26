@@ -8,6 +8,7 @@ public abstract class Contribution {
 	protected float adjustRate;
 	protected double minimumBet;
 	protected float previousChangePercent;
+	protected double lastBet;
 	
 	public Contribution(float betPercent, float adjustRate) {
 		directionIncreaseBet = Math.random() > 0.5d;
@@ -15,10 +16,8 @@ public abstract class Contribution {
 		this.betPercent = betPercent;
 	}
 	
-	public void adjustBetPercent(double reward, double bank, List<Contribution> otherContributions) throws Exception {
-		throw new Exception("Method not implemented!!!!");
-	}
-	
+	public abstract void adjustBetPercent(double reward, double bank, double totalReward, List<Contribution> otherContributions);
+		
 	protected void adjustForMinimumBet(double bank) {
 		if(bank > this.minimumBet) {
 			double normalReturn = bank * this.betPercent;
@@ -44,7 +43,12 @@ public abstract class Contribution {
 		if(betAmount < this.minimumBet) {
 			betAmount = 0;
 		}
+		this.lastBet = betAmount;
 		return betAmount;
+	}
+	
+	public double getLastBet() {
+		return this.lastBet;
 	}
 	
 	public float getBetPercent() {
@@ -53,6 +57,10 @@ public abstract class Contribution {
 	
 	public double getPreviousGainPercent() {
 		return this.previousChangePercent;
+	}
+	
+	public boolean getPositiveDirecetion() {
+		return this.directionIncreaseBet;
 	}
 	
 	public void setLearningRate(float learningRate) {
