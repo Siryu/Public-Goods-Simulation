@@ -1,88 +1,53 @@
 package actors;
 
+import java.util.List;
+
+import contributions.Contribution;
+
 public class Contributor {
 	
-	private float contribution;
+	private Contribution contribution;
 	private float bank;
-	private float change;
-	private float direction;
 	private double netGain = 0;
 	private double totalGain = 0;
-	private float adjustRate;
-	private float minimumAmount = 0.0f;
-	private float initialContribution;
 	
-	public Contributor(float contribution, float bank){
-		this.contribution = contribution;
-		this.initialContribution = contribution;
+	public Contributor(float contribution, float bank) {
+		this.contribution = new Contribution(contribution, 0);
 		this.bank = bank;
-		this.direction = (Math.random() * 2) - 1 > 0 ? 1 : -1;
 	}
 	
-	public float getContribution() {
-		float baseAmount;
-		if(this.bank > this.minimumAmount) {
-			//float base = initialContribution * bank;
-			float base = contribution * bank;
-			baseAmount = base > this.minimumAmount ? base : minimumAmount;		
-			this.contribution = baseAmount / this.bank;
-			normalizeContribution();
-		}
-		else {
-			baseAmount = 0;
-		}
-		return baseAmount;
+	public Contributor(float contribution, float bank, float adjustRate){
+		this.contribution = new Contribution(contribution, adjustRate);
+		this.bank = bank;
 	}
+	
+	public Contributor(float contribution, float bank, float adjustRate, double minimumBet) {
+		this(contribution, bank, adjustRate);
+		this.contribution.setMinimumBet(bank, minimumBet);
+	}
+	
+	public Contribution getContribution() {
+		return this.contribution;
+	}
+	
 	public float getBank(){
 		return bank;
 	}
-	public float getAdjustRate() {
-		return adjustRate;
-	}
-	public void setAdjustRate(float adjustRate) {
-		this.adjustRate = adjustRate;
-	}
-	public void addToBank(float reward){
-		adjustContribution(reward);
-		normalizeContribution();
-		bank += reward;
-	}
-
-	private void adjustContribution(float reward) {
-		float originalContribution = getContribution();
-		this.netGain = reward - originalContribution;
-		float previousChange = this.change;
-		this.totalGain += (reward - originalContribution);
-		float gainChangePercent = reward / (originalContribution);
-		float changeInReward = gainChangePercent - previousChange;
-		//System.out.println("changeInReward: " + changeInReward);
-		bank -= originalContribution;
-		if(changeInReward < 0) {
-			direction *= -1;
-		}
-		this.change = gainChangePercent;
-		this.contribution += (direction * adjustRate);
-	}
 	
-	private void normalizeContribution() {
-		if(this.contribution > 1) {
-			this.contribution = 1;
-		}
-		else if(this.contribution < 0.001) {
-			this.contribution = 0.001f;
-		}
-	}
-	
-	public void removeFromBank(float amount) {
-		this.bank = this.bank > amount ? this.bank - amount : 0;
+	public void receiveReward(float reward, List<Contribution> otherContributions){
+		this.contribution.adjustBetPercent(reward, bank, otherContributions);
+		this.netGain = reward;
+		this.totalGain += reward;
+		this.bank -= this.contribution.getBet(bank);
+		this.bank += reward;
 	}
 	
 	public void setMinimumBet(float amount) {
-		this.minimumAmount = amount;
+		this.contribution.setMinimumBet(bank, amount);
 	}
-	
+		
 	@Override
 	public String toString() {
-		return String.format("Contribution: %-10.0fBalance: %-15.2fGain: %-15.2fTotal Gain: %-10.2f", contribution * 100, bank, netGain, totalGain);
+		return String.format("Contribution: %-10.0fBalance: %-15.2fGain: %-15.2fTotal Gain: %-10.2f", this.contribution.getBetPercent() * 100, bank, netGain, totalGain);
 	}
 }

@@ -1,86 +1,83 @@
 package publicGoods;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import actors.Contributor;
+import contributions.Contribution;
 
 public class GameController {
 	private int numberOfRounds;
 	private float potMultiplyer;
 	private boolean percentageReward;
+	private boolean minimumBet;
 	private float bestContributorBonus;
 	private float flatPunishment;
-	private float minimumEntry;
-	private float learningRate;
+	
 	private ArrayList<Contributor> contributors;
 	
-	public GameController(int numberOfRounds, float potMultiplyer, boolean percentageReward, float bestContributorBonus, float flatPunishment, float minimumEntry, float learningRate) {
+	public GameController(int numberOfRounds, float potMultiplyer, boolean percentageReward, boolean minimumBet, float bestContributorBonus, float flatPunishment) {
 		this.numberOfRounds = numberOfRounds;
 		this.potMultiplyer = potMultiplyer;
 		this.percentageReward = percentageReward;
 		this.bestContributorBonus = bestContributorBonus;
 		this.flatPunishment = flatPunishment;
-		this.minimumEntry = minimumEntry;
-		this.learningRate = learningRate;
+		this.minimumBet = minimumBet;
 		this.contributors = new ArrayList<Contributor>();
 	}
 	
 	public void run() {
-
 		Scanner scanner = new Scanner(System.in);
 		for(int i = 0; i < numberOfRounds; i++) {
 			float pot = 0;
 			float newPot = 0;
 			for(Contributor c : this.contributors) {
-				pot += c.getContribution();
+				pot += c.getContribution().getBet(c.getBank());
 			}
 			newPot = pot * potMultiplyer;
 			float individualPayout;
-			Contributor highestContributor = null;
-		
-			for(Contributor c : this.contributors) {
-				if(highestContributor == null || highestContributor.getContribution() < c.getContribution()) {
-					highestContributor = c;
-				}
-			}
+			ArrayList<Contributor> highestContributors = getHighestContributors();
 			
 			if(percentageReward) {
 				if(pot > 0) {
 					for(Contributor c : this.contributors) {
-						float percentOfPot = c.getContribution() / pot;
+						List<Contribution> otherContributions = getOtherContributions(c);
+						float percentOfPot = (float) (c.getContribution().getBet(c.getBank()) / pot);
 						individualPayout = percentOfPot * newPot;
 						float finalPayout = individualPayout;
-						if(c == highestContributor) {
-							finalPayout += this.bestContributorBonus;
+						double highestContributorReward = this.bestContributorBonus / highestContributors.size();
+						if(highestContributors.contains(c)) {
+							finalPayout += highestContributorReward;
 						}
-						c.addToBank(finalPayout);
+						c.receiveReward(finalPayout, this.getOtherContributions(c));
 					}
 				}
 			}
 			else {
 				int contributorCount = 0;
-				if(this.minimumEntry > 0) {
+				ArrayList<Contributor> minBetSuccess = new ArrayList<Contributor>();
+				if(this.minimumBet) {
 					for(Contributor contributor : this.contributors) {
-						if(contributor.getContribution() > 0) {
+						if(contributor.getContribution().getBet(contributor.getBank()) > 0) {
 							contributorCount++;
+							minBetSuccess.add(contributor);
 						}
 					}
 				}
 				else {
 					contributorCount = this.contributors.size();
+					minBetSuccess = this.contributors;
 				}
+				
 				individualPayout = newPot / contributorCount;
-				for(Contributor c : this.contributors) {
+				for(Contributor c : minBetSuccess) {
 					float finalPayout = individualPayout;
-					if(c == highestContributor) {
-						finalPayout += this.bestContributorBonus;
+					if(highestContributors.contains(c)) {
+						finalPayout += this.bestContributorBonus / highestContributors.size();
 					}
-					c.addToBank(finalPayout);
+					c.receiveReward(finalPayout, this.getOtherContributions(c));
 				}
-			}
-			for(Contributor c : this.contributors) {
-				c.removeFromBank(this.flatPunishment);
 			}
 			
 			//scanner.nextLine();
@@ -94,9 +91,42 @@ public class GameController {
 	}
 	
 	public void addContributor(Contributor contributor) {
-		contributor.setMinimumBet(this.minimumEntry);
-		contributor.setAdjustRate(this.learningRate);
 		this.contributors.add(contributor);
 	}
 	
+	private ArrayList<Contributor> getHighestContributors() {
+		ArrayList<Contributor> contributors = new ArrayList<Contributor>();
+		
+		for(Contributor c : this.contributors) {
+			if(contributors.isEmpty()) {
+				contributors.add(c);
+			}
+			else {
+				for(Contributor inList : contributors) {
+					if(c.getContribution().getBet(c.getBank()) > inList.getContribution().getBet(inList.getBank())) {
+						contributors.remove(inList);
+						if(!contributors.contains(c)) {
+							contributors.add(c);
+						}
+					}
+					else if(c.getContribution().getBet(c.getBank()) == inList.getContribution().getBet(inList.getBank())) {
+						if(!contributors.contains(c)) {
+							contributors.add(c);
+						}
+					}
+				}
+			}
+		}
+		return contributors;
+	}
+	
+	private List<Contribution> getOtherContributions(Contributor contributor) {
+		ArrayList<Contribution> contributions = new ArrayList<Contribution>();
+		for(Contributor c : this.contributors) {
+			if(c != contributor) {
+				contributions.add(c.getContribution());
+			}
+		}
+		return contributions;
+	}
 }
