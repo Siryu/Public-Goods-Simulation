@@ -4,21 +4,26 @@ public class Contributor {
 	
 	private float contribution;
 	private float bank;
-	private byte change = 1;
-	private float netGain = 0;
+	private float change;
+	private float direction;
+	private double netGain = 0;
+	private double totalGain = 0;
 	private float adjustRate;
 	private float minimumAmount = 0.0f;
 	private float initialContribution;
 	
 	public Contributor(float contribution, float bank){
+		this.contribution = contribution;
 		this.initialContribution = contribution;
 		this.bank = bank;
+		this.direction = (Math.random() * 2) - 1 > 0 ? 1 : -1;
 	}
 	
 	public float getContribution() {
 		float baseAmount;
 		if(this.bank > this.minimumAmount) {
-			float base = initialContribution * bank;
+			//float base = initialContribution * bank;
+			float base = contribution * bank;
 			baseAmount = base > this.minimumAmount ? base : minimumAmount;		
 			this.contribution = baseAmount / this.bank;
 			normalizeContribution();
@@ -42,21 +47,29 @@ public class Contributor {
 		normalizeContribution();
 		bank += reward;
 	}
-	private void adjustContribution(float reward){
-		float previousGain = netGain;
-		netGain = reward - getContribution();
-		bank -= getContribution();
-		float gainChange = netGain - previousGain;
-		change = (byte)(gainChange/Math.abs(gainChange));
-		this.contribution += change * adjustRate;
+
+	private void adjustContribution(float reward) {
+		float originalContribution = getContribution();
+		this.netGain = reward - originalContribution;
+		float previousChange = this.change;
+		this.totalGain += (reward - originalContribution);
+		float gainChangePercent = reward / (originalContribution);
+		float changeInReward = gainChangePercent - previousChange;
+		//System.out.println("changeInReward: " + changeInReward);
+		bank -= originalContribution;
+		if(changeInReward < 0) {
+			direction *= -1;
+		}
+		this.change = gainChangePercent;
+		this.contribution += (direction * adjustRate);
 	}
 	
 	private void normalizeContribution() {
-		if(this.contribution > 100) {
-			this.contribution = 100;
+		if(this.contribution > 1) {
+			this.contribution = 1;
 		}
-		else if(this.contribution < 0) {
-			this.contribution = 0;
+		else if(this.contribution < 0.001) {
+			this.contribution = 0.001f;
 		}
 	}
 	
@@ -70,6 +83,6 @@ public class Contributor {
 	
 	@Override
 	public String toString() {
-		return String.format("Contribution: %-10.0fBalance: %-15.2fGain: %-10.2f", contribution * 100, bank, netGain);
+		return String.format("Contribution: %-10.0fBalance: %-15.2fGain: %-15.2fTotal Gain: %-10.2f", contribution * 100, bank, netGain, totalGain);
 	}
 }

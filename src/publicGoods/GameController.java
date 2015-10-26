@@ -1,12 +1,13 @@
 package publicGoods;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import actors.Contributor;
 
 public class GameController {
 	private int numberOfRounds;
-	private int potMultiplyer;
+	private float potMultiplyer;
 	private boolean percentageReward;
 	private float bestContributorBonus;
 	private float flatPunishment;
@@ -14,7 +15,7 @@ public class GameController {
 	private float learningRate;
 	private ArrayList<Contributor> contributors;
 	
-	public GameController(int numberOfRounds, int potMultiplyer, boolean percentageReward, float bestContributorBonus, float flatPunishment, float minimumEntry, float learningRate) {
+	public GameController(int numberOfRounds, float potMultiplyer, boolean percentageReward, float bestContributorBonus, float flatPunishment, float minimumEntry, float learningRate) {
 		this.numberOfRounds = numberOfRounds;
 		this.potMultiplyer = potMultiplyer;
 		this.percentageReward = percentageReward;
@@ -26,6 +27,8 @@ public class GameController {
 	}
 	
 	public void run() {
+
+		Scanner scanner = new Scanner(System.in);
 		for(int i = 0; i < numberOfRounds; i++) {
 			float pot = 0;
 			float newPot = 0;
@@ -79,11 +82,15 @@ public class GameController {
 			for(Contributor c : this.contributors) {
 				c.removeFromBank(this.flatPunishment);
 			}
+			
+			//scanner.nextLine();
+			for(Contributor c : this.contributors) {
+				System.out.println(c.toString());
+			}
+			System.out.println();
 		}
 		
-		for(Contributor c : this.contributors) {
-			System.out.println(c.toString());
-		}
+	
 	}
 	
 	public void addContributor(Contributor contributor) {
