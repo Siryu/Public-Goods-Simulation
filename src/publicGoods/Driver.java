@@ -12,8 +12,8 @@ public class Driver {
 //		System.out.println("Phase 1.. all permutations of 3 different types of contributors.");
 //		driver.runWithPermutations(1, 3, 1.2f, 0f, false, 0f, 0f, 0f);
 //		System.out.println("Phase 2...............");
-//		driver.phase2();
-		driver.phase3();
+		driver.phase2();
+//		driver.phase3();
 	}
 	
 	private void runWithPermutations(int runCount, int actorCount, float potMultiplier, float flatReward, boolean divyPotByPercent, float punishment, float minEntry, float learningRate) {
@@ -37,23 +37,26 @@ public class Driver {
 	
 	private void phase2() {
 //		System.out.println("more actors..........................................");
-//		runWithPermutations(1, 5, 2, 0, false, 0f, 0f, 0f);
+//		runWithPermutations(1, 5, 2, 0, false, 0f, 0f, .01f);
 //		System.out.println("Variable multiplier ..................................");
-//		runWithPermutations(1, 3, 3, 0, false, 0f, 0f, 0f);
+//		runWithPermutations(10, 3, 1.2f, 0, false, 0f, 0f, .1f);		// with high multiplier(3), more likely to go towards 100 if it's alreaedy high, like 100 100 50 starting or 100 100 0
+																		// then all drop to 0
 //		System.out.println("Flat reward added to the one given most resources.....");
-//		runWithPermutations(2, 3, 2, 100, false, 0f, 0f, 0f);
-//		System.out.println("More personalities introduced.........................");
-//		GameController gc = new GameController(1, 2, false, false, 0f, 0f);
-//		gc.addContributor(new Contributor(.25f, 500));
-//		gc.addContributor(new Contributor(.75f, 500));
-//		gc.addContributor(new Contributor(.1f, 500));
-//		gc.run();
+//		runWithPermutations(10, 3, 2, 100, false, 0f, 0f, .1f);         // doesn't really change anything.
+		System.out.println("More personalities introduced.........................");
+		GameController gc = new GameController(200, 2, false, false, 0f, .1f);  // doesn't really change anything. may go up to 100, but will always head back to 0
+		gc.addContributor(new Contributor(.25f, 500, .01f));
+		gc.addContributor(new Contributor(.75f, 500, .01f));
+		gc.addContributor(new Contributor(.1f, 500, .01f));
+		gc.addContributor(new Contributor(.75f, 500, .01f));
+		gc.addContributor(new Contributor(.1f, 500, .01f));
+		gc.run();
 //		System.out.println("percentage of pot split between actors ...............");
-//		runWithPermutations(1, 3, 2, 0, true, 0f, 0f, 0f);
+//		runWithPermutations(10, 3, 2, 0, true, 0f, 0f, .1f);			// trends towards everyone giving 100
 //		System.out.println("place a punishment on everyone at end of round .......");
-//		runWithPermutations(1, 3, 2, 0, false, 20f, 0f, .1f);
+//		runWithPermutations(10, 3, 2, 0, false, 20f, 0f, .1f);			// trends toward 100 if two people are giving alot ot begin with, otherwise towards 0
 //		System.out.println("Minimum entry to receive payout........................");
-//		runWithPermutations(1, 3, 2, 0, false, 0f, 10f, .0f);
+//		runWithPermutations(10, 3, 2, 0, false, 0f, 10f, .1f);			// all trended towards 0 
 	}
 	
 	private void phase3() {
@@ -64,10 +67,10 @@ public class Driver {
 		gc.addContributor(new Contributor((float)Math.random(), 100, learningRate));
 		gc.addContributor(new Contributor((float)Math.random(), 100, learningRate));
 		gc.addContributor(new Contributor((float)Math.random(), 100, learningRate));
-		gc.addContributor(new Contributor((float)Math.random(), 100, learningRate));
-		gc.addContributor(new Contributor((float)Math.random(), 100, learningRate));
-		gc.addContributor(new Contributor((float)Math.random(), 100, learningRate));
-		gc.addContributor(new Contributor((float)Math.random(), 100, learningRate));
+//		gc.addContributor(new Contributor((float)Math.random(), 100, learningRate));
+//		gc.addContributor(new Contributor((float)Math.random(), 100, learningRate));
+//		gc.addContributor(new Contributor((float)Math.random(), 100, learningRate));
+//		gc.addContributor(new Contributor((float)Math.random(), 100, learningRate));
 		gc.run();
 	}
 	
