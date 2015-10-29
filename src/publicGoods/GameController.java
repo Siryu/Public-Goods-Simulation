@@ -78,14 +78,15 @@ public class GameController {
 					c.receiveReward(finalPayout - this.flatPunishment, newPot, this.getOtherContributions(c));
 				}
 			}
-			for(Contributor c : this.contributors) {
-				System.out.println(c.toString());
-			}
-			System.out.println();
-			scanner.nextLine();
+			
+			//scanner.nextLine();
 			
 	
 		}
+		for(Contributor c : this.contributors) {
+			System.out.println(c.toString());
+		}
+		System.out.println();
 		
 	}
 	
@@ -117,6 +118,10 @@ public class GameController {
 			}
 		}
 		return contributors;
+	}
+	
+	public List<Contributor> getContributors() {
+		return this.contributors;
 	}
 	
 	private List<Contribution> getOtherContributions(Contributor contributor) {

@@ -37,8 +37,12 @@ public class Contributor {
 		return this.contribution;
 	}
 	
-	public float getBank(){
+	public double getBank(){
 		return bank;
+	}
+	
+	public double getTotalGain() {
+		return this.totalGain;
 	}
 	
 	public void receiveReward(float reward, double totalReward, List<Contribution> otherContributions){
@@ -51,8 +55,8 @@ public class Contributor {
 		}
 		this.netGain = reward - previousBet;
 		this.totalGain += reward - previousBet;
-		this.bank -= previousBet;
-		this.bank += reward;
+		//this.bank -= previousBet;
+		//this.bank += reward;
 	}
 	
 	public void setMinimumBet(float amount) {

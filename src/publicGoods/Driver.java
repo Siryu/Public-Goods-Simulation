@@ -1,7 +1,9 @@
 package publicGoods;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import actors.Contributor;
 
@@ -12,8 +14,8 @@ public class Driver {
 //		System.out.println("Phase 1.. all permutations of 3 different types of contributors.");
 //		driver.runWithPermutations(1, 3, 1.2f, 0f, false, 0f, 0f, 0f);
 //		System.out.println("Phase 2...............");
-		driver.phase2();
-//		driver.phase3();
+//		driver.phase2();
+		driver.phase3();
 	}
 	
 	private void runWithPermutations(int runCount, int actorCount, float potMultiplier, float flatReward, boolean divyPotByPercent, float punishment, float minEntry, float learningRate) {
@@ -60,18 +62,65 @@ public class Driver {
 	}
 	
 	private void phase3() {
-		System.out.println("simulation changed to update contribution for best returns...");
-		float learningRate = 0.1f;
-		GameController gc = new GameController(200, 1.2f, false, false, 0, .01f);
-		gc.addContributor(new Contributor((float)Math.random(), 100, learningRate));
-		gc.addContributor(new Contributor((float)Math.random(), 100, learningRate));
-		gc.addContributor(new Contributor((float)Math.random(), 100, learningRate));
-		gc.addContributor(new Contributor((float)Math.random(), 100, learningRate));
-//		gc.addContributor(new Contributor((float)Math.random(), 100, learningRate));
-//		gc.addContributor(new Contributor((float)Math.random(), 100, learningRate));
-//		gc.addContributor(new Contributor((float)Math.random(), 100, learningRate));
-//		gc.addContributor(new Contributor((float)Math.random(), 100, learningRate));
+		HashMap<String, Double> highestAmounts = new HashMap<String, Double>();
+		System.out.println("base 400 rounds, 1.2x, 1% change rate");
+		GameController gc = new GameController(400, 1.2f, false, false, 0f, .05f);  
+		gc.addContributor(new Contributor(.25f, 100, .01f));
+		gc.addContributor(new Contributor(.75f, 100, .01f));
+		gc.addContributor(new Contributor(.1f, 100, .01f));
 		gc.run();
+		highestAmounts.put("Base Run", getHighestTotalgain(gc.getContributors()));
+		System.out.println();
+		System.out.println("change multiplyer to 3x");
+		gc = new GameController(400, 3f, false, false, 0f, 0f); 
+		gc.addContributor(new Contributor(.25f, 100, .01f));
+		gc.addContributor(new Contributor(.75f, 100, .01f));
+		gc.addContributor(new Contributor(.1f, 100, .01f));
+		gc.run();
+		highestAmounts.put("3x multiplyer", getHighestTotalgain(gc.getContributors()));
+		System.out.println();
+		System.out.println("percent split by percent contributed");
+		gc = new GameController(400, 1.2f, true, false, 0f, 0f);  
+		gc.addContributor(new Contributor(.25f, 100, .01f));
+		gc.addContributor(new Contributor(.75f, 100, .01f));
+		gc.addContributor(new Contributor(.1f, 100, .01f));
+		gc.run();
+		highestAmounts.put("percent split by percent contributed", getHighestTotalgain(gc.getContributors()));
+		System.out.println();
+		System.out.println("include a minumum buy in of 20");
+		gc = new GameController(400, 1.2f, false, true, 0f, 0f);  
+		gc.addContributor(new Contributor(.25f, 100, .01f, 20));
+		gc.addContributor(new Contributor(.75f, 100, .01f, 20));
+		gc.addContributor(new Contributor(.1f, 100, .01f, 20));
+		gc.run();
+		highestAmounts.put("Minimum buy in of 20", getHighestTotalgain(gc.getContributors()));
+		System.out.println();
+		System.out.println("give a bonus to the best contributors");
+		gc = new GameController(400, 1.2f, false, false, 5f, 0f);  
+		gc.addContributor(new Contributor(.25f, 100, .01f));
+		gc.addContributor(new Contributor(.75f, 100, .01f));
+		gc.addContributor(new Contributor(.1f, 100, .01f));
+		gc.run();
+		highestAmounts.put("best contributors bonus", getHighestTotalgain(gc.getContributors()));
+		System.out.println();
+		System.out.println("have a penalty of 10 each round");
+		gc = new GameController(400, 1.2f, false, false, 0, 5f);  
+		gc.addContributor(new Contributor(.25f, 100, .01f));
+		gc.addContributor(new Contributor(.75f, 100, .01f));
+		gc.addContributor(new Contributor(.1f, 100, .01f));
+		gc.run();
+		highestAmounts.put("penalty each round", getHighestTotalgain(gc.getContributors()));
+		
+		Entry<String, Double> winner = null;
+		for(Entry<String, Double> h : highestAmounts.entrySet()) {
+			if(winner == null || winner.getValue() < h.getValue()) {
+				winner = h;
+			}
+		}
+		
+		System.out.println("\n\n the winner is " + winner.getKey() + " with " + winner.getValue() + " total gain.");
+		
+		
 	}
 	
 	private static List<List<Float>> makeSets(float[] types, List<Float> beginning, int location, int numberPlayers) {
@@ -86,5 +135,15 @@ public class Driver {
 			toReturn.add(new ArrayList<Float>(nextOnes));
 		}
 		return toReturn;
+	}
+	
+	private double getHighestTotalgain(List<Contributor> contributors) {
+		double highestAmount = 0;
+		for(Contributor c : contributors) {
+			if(c.getTotalGain() > highestAmount) {
+				highestAmount = c.getTotalGain();
+			}
+		}
+		return highestAmount;
 	}
 }
